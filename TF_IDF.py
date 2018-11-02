@@ -53,7 +53,14 @@ def TF_IDF(Redis,totalFileCount):
 
 
 def GetTotalfileCount(localdir):
-    pass
+    list = os.listdir(localdir)  # 列出文件夹下所有的目录与文件
+    for i in range(0, len(list)):
+        path = os.path.join(localdir, list[i])
+        if os.path.isdir(path):
+            return GetTotalfileCount(path)
+        elif os.path.isfile(path):
+            return 1+GetTotalfileCount(path)
+    
 
 
 if __name__=='__main__':
