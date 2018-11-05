@@ -4,5 +4,5 @@
 
 #(2) Experiment Data is upload to github called Exp.zip
 
-#(3) TODO :calc KNN
+#(3) Problem: Coz I foget to remain data for testing ,so I get other files online from The Economist to figure out the accurancy of my      model,actually the accuancy is not well,I input 20 files and only 9 are in their right position, I need to change the param K for further testing 
 
