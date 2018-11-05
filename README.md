@@ -1,4 +1,4 @@
-#Huangkecheng's DataMining Task
+##Huangkecheng's DataMining Task
 
 #(1) using KV db redis to store my info like TF , IDF and so on , which worked well.
 
