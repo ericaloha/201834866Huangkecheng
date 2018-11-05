@@ -1,7 +1,9 @@
 import json
+import os
 
 import redis
 
+from Vsm.Doing import mainfuc
 from Vsm.TF_IDF_Redis import CalcIDF
 from Vsm.preProcessing import PreProcessing
 pool = redis.ConnectionPool(host='127.0.0.1', port=6379, password=123456, db=0)
@@ -26,6 +28,9 @@ def ConVert(Redis):
                 dict={'huang':0}
                 Redis.set(path,json.dumps(dict))
 #2.now we get the fileDict Try KNN
+def calcKNN(wordDict, path):
+    pass
+
 
 def TryKNN(Redis,newfile):
     #1, deal with new file
@@ -49,10 +54,6 @@ def TryKNN(Redis,newfile):
 
     print (maxpath,"is the nearnest Neighbor")
 
-
-
-if __name__=="__main__":
-    ConVert(Redis)
 def KNNmain():
     # 1.预处理测试集
     Dict={}
@@ -83,7 +84,54 @@ def KNNmain():
         print(maxpath)
         Dict.pop(maxpath)
     print('finishing....')
+fileDict1={}
+def createfileDict(rootdir):
+    list = os.listdir(rootdir)
+    print(list)
+    for i in range(0, len(list)):
+        path = os.path.join(rootdir, list[i])
+        if os.path.isdir(path):
+           createfileDict(path)
+        elif os.path.isfile(path):
+            fileDict1[path]=0
+
+
+def FindInRedis(file):
+    keys=Redis.keys()
+    worddict={}
+    for key in keys:
+        info=json.loads(Redis.get(key))
+        if file in info.keys():
+            worddict[key]=info[file]
+    return worddict
 
 
 
+def fillinFileDict(fileDict1):
+    for file in fileDict1:
+        worddict=FindInRedis(file)
+        fileDict1[file]=worddict
+        print('123')
 
+def calcKNN(input,fileDict1):
+    wordList=PreProcessing(input)
+    s=0
+    for file in fileDict1:
+        info=fileDict1[file]
+        for item in info:
+            if item in wordList:
+                s+=pow((wordList[item]-info[item]),2)
+    return s
+if __name__=='__main__':
+
+    root='C:\\20news-18828'
+    createfileDict(root)
+    print(fileDict1)
+    fillinFileDict(fileDict1)
+    f=open('C:\\20news-18828\\test','w',errors='ignore')
+    f.write(fileDict1)
+    filedir='C:\\20news-18828\\test'
+    slist=[]
+    for file in filedir:
+        s=calcKNN(file,fileDict1)
+        slist.append(s)
