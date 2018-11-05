@@ -26,9 +26,6 @@ def ConVert(Redis):
                 dict={'huang':0}
                 Redis.set(path,json.dumps(dict))
 #2.now we get the fileDict Try KNN
-def calcKNN(wordDict, path):
-    pass
-
 
 def TryKNN(Redis,newfile):
     #1, deal with new file
