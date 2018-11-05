@@ -1,0 +1,52 @@
+# what we have:word's many tf like
+#{
+# 'peg':
+#       {
+#           "huang": 0,
+#           "sci.electronics53562": 1
+#        }
+# }
+import json
+import math
+import os
+
+import redis
+
+pool = redis.ConnectionPool(host='127.0.0.1', port=6379, password=123456, db=0)
+Redis = redis.Redis(connection_pool=pool)
+#step1:get IDF based on word
+
+def CalcIDF(word,Redis):
+    #1.这个词总的出现次数
+    count=len(json.loads(Redis.get(word)))
+    #2.total
+    total=18828
+    return math.log(total/(count+1))
+
+def UpDateRedisToTF_IDF(Redis):
+    keys=Redis.keys()
+    for key in keys:
+        IDF = CalcIDF(key,Redis)
+        pathlist=json.loads(Redis.get(key))
+        for path in pathlist:
+            TF=pathlist[path]
+            pathlist[path]=TF * IDF
+        Redis.set(key,json.dumps(pathlist))
+        print('1wf')
+
+def DwonToFile(Redis,localdir):
+    f=open(localdir,'w',errors='ignore')
+    keys=Redis.keys()
+    Dict={}
+    for key in keys:
+        Dict[key]=Redis.get(key)
+    f.write(str(Dict))
+    f.close()
+    return 0
+
+if __name__ == "__main__":
+    #UpDateRedisToTF_IDF(Redis)
+    localdir='C:\\Users\\eric\\SDU\\实验\\专业课实验\\DataMining\\Exp\\TD_IDF'
+    DwonToFile(Redis,localdir)
+    print('finish')
+
