@@ -21,17 +21,25 @@ if __name__ == '__main__':
         if Redis.exists(word):
             Dict[word]=json.loads(Redis.get(word))
     # 2. 测试比较
-    #挑出最大的tfidf
-    max=0
-    maxpath=''
-    for word in Dict:
-        info=Dict[word]
-        if info ==0:
-            continue
-        for path in info:
-            if info[path]>max:
-                max=info[path]
-                maxpath=path
-    print(maxpath)
+    #挑出最大的tfidf,然后剔除，以此类推获得前k个最近的group
+    K =1 #can be changed by need
+    while K:
+        K-=1
+        max=0
+        maxpath=''
+        for word in Dict:
+            info=Dict[word]
+            if info ==0:
+                continue
+            for path in info:
+                if info[path]>max:
+                    max=info[path]
+                    maxpath=path
+        print(maxpath)
+        Dict.pop(maxpath)
+    print('finishing....')
+
+    
+
 
 
